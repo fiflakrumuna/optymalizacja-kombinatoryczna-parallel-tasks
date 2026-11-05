@@ -7,6 +7,7 @@
 struct HeaderInfo {
     int max_jobs = -1;
     int max_nodes = -1;
+    int max_procs = -1;
 };
 
 

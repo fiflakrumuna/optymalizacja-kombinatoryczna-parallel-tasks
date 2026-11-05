@@ -32,11 +32,18 @@ HeaderInfo parseHeader(const std::string& file_path) {
             ss >> info.max_jobs;
         }
 
-        // Wyciąganie wartości MaxRecords
+        // Wyciąganie wartości MaxNodes
         size_t nodes_pos = line.find("MaxNodes:");
         if (nodes_pos != std::string::npos) {
             std::stringstream ss(line.substr(nodes_pos + 10));
             ss >> info.max_nodes;
+        }
+
+        // Wyciąganie wartości MaxProcs
+        size_t procs_pos = line.find("MaxProcs:");
+        if (procs_pos != std::string::npos) {
+            std::stringstream ss(line.substr(procs_pos + 10));
+            ss >> info.max_procs;
         }
     }
 
