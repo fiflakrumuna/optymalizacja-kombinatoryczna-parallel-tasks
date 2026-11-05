@@ -3,6 +3,47 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "data_scraper.hpp"
+
+HeaderInfo parseHeader(const std::string& file_path) {
+
+    std::ifstream file(file_path);
+    HeaderInfo info;
+
+    if (!file.is_open()) {
+        std::cerr << "Blad: Nie mozna otworzyc pliku (naglowek): " << file_path << std::endl;
+        return info;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        size_t first_char = line.find_first_not_of(" \t\r\n");
+
+        // Jeśli trafimy na pierwszą linię danych (nie-komentarz), nagłówek się skończył
+        if (first_char != std::string::npos && line[first_char] != ';') {
+            break;
+        }
+
+        if (first_char == std::string::npos) continue;
+
+        // Wyciąganie wartości MaxJobs
+        size_t jobs_pos = line.find("MaxJobs:");
+        if (jobs_pos != std::string::npos) {
+            std::stringstream ss(line.substr(jobs_pos + 8));
+            ss >> info.max_jobs;
+        }
+
+        // Wyciąganie wartości MaxRecords
+        size_t nodes_pos = line.find("MaxNodes:");
+        if (nodes_pos != std::string::npos) {
+            std::stringstream ss(line.substr(nodes_pos + 10));
+            ss >> info.max_nodes;
+        }
+    }
+
+    file.close();
+    return info;
+}
 
 std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limit) {
     std::ifstream file(file_path);
@@ -53,43 +94,43 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
     return data_ready;
 }
 
-int main(void) {
-    std::string file_path;
-
-    std::cout << "Podaj sciezke do pliku: ";
-
-    std::getline(std::cin, file_path);
-
-    int proc_limit;
-
-    std::cout << "Podaj ilosc procesow do przerobienia: ";
-
-    std::cin >> proc_limit;
-    
-    
-    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
-        file_path.erase(0, 1);
-    }
-    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
-        file_path.pop_back();
-    }
-
-    std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
-
-    if (data.empty()) {
-        std::cout << "Brak danych do wyswietlenia." << std::endl;
-        return 0;
-    }
-
-    std::cout << "Pobrano " << data.size() << " wierszy danych:\n\n";
-
-    for (size_t i = 0; i < data.size(); ++i) {
-        std::cout << "Wiersz " << (i + 1) << ": ";
-        for (int value : data[i]) {
-            std::cout << value << "\t";
-        }
-        std::cout << "\n";
-    }
-
-    return 0;
-}
+//int main(void) {
+//    std::string file_path;
+//
+//    std::cout << "Podaj sciezke do pliku: ";
+//
+//    std::getline(std::cin, file_path);
+//
+//    int proc_limit;
+//
+//    std::cout << "Podaj ilosc procesow do przerobienia: ";
+//
+//    std::cin >> proc_limit;
+//    
+//    
+//    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
+//        file_path.erase(0, 1);
+//    }
+//    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
+//        file_path.pop_back();
+//    }
+//
+//    std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
+//
+//    if (data.empty()) {
+//        std::cout << "Brak danych do wyswietlenia." << std::endl;
+//        return 0;
+//    }
+//
+//    std::cout << "Pobrano " << data.size() << " wierszy danych:\n\n";
+//
+//    for (size_t i = 0; i < data.size(); ++i) {
+//        std::cout << "Wiersz " << (i + 1) << ": ";
+//        for (int value : data[i]) {
+//            std::cout << value << "\t";
+//        }
+//        std::cout << "\n";
+//    }
+//
+//    return 0;
+//}
