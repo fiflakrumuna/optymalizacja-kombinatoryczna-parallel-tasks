@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 
-std::vector<std::vector<int>> scrap(const std::string& file_path) {
+std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limit) {
     std::ifstream file(file_path);
     std::vector<std::vector<int>> data_ready;
 
@@ -14,7 +14,7 @@ std::vector<std::vector<int>> scrap(const std::string& file_path) {
     }
 
     std::string line;
-    while (std::getline(file, line)) {
+    while (std::getline(file, line) && proc_limit>0) {
         size_t first_char = line.find_first_not_of(" \t\r\n");
 
         if (first_char == std::string::npos || line[first_char] == ';') {
@@ -46,6 +46,7 @@ std::vector<std::vector<int>> scrap(const std::string& file_path) {
         if (!row.empty()) {
             data_ready.push_back(row);
         }
+        --proc_limit;
     }
     
     file.close();
@@ -58,6 +59,13 @@ int main(void) {
     std::cout << "Podaj sciezke do pliku: ";
 
     std::getline(std::cin, file_path);
+
+    int proc_limit;
+
+    std::cout << "Podaj ilosc procesow do przerobienia: ";
+
+    std::cin >> proc_limit;
+    
     
     if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
         file_path.erase(0, 1);
@@ -66,7 +74,7 @@ int main(void) {
         file_path.pop_back();
     }
 
-    std::vector<std::vector<int>> data = scrap(file_path);
+    std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
 
     if (data.empty()) {
         std::cout << "Brak danych do wyswietlenia." << std::endl;
