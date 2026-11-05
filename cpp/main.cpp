@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <fstream>
 #include "data_scraper.hpp"
 #include "greedy.hpp"
 
@@ -16,17 +17,8 @@ int main(int argc,char* argv[]) {
         }
     }
     else{
-    
         std::cout << "Podaj sciezke do pliku: ";
         std::getline(std::cin, file_path);
-
-        if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
-            file_path.erase(0, 1);
-        }
-        if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
-            file_path.pop_back();
-        }
-
 
         std::cout << "Podaj liczbe zadan do przetworzenia: ";
         std::cin >> task_limit;
@@ -36,8 +28,16 @@ int main(int argc,char* argv[]) {
             return 0;
     }
 
+    
+    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
+        file_path.erase(0, 1);
+    }
+    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
+        file_path.pop_back();
+    }
+
     HeaderInfo header = parseHeader(file_path);
-    if (!(task_limit >= header.max_jobs)){
+    if ((task_limit >= header.max_jobs)){
         task_limit = header.max_jobs;
     }
     int remaining_tasks = task_limit;
@@ -72,20 +72,20 @@ int main(int argc,char* argv[]) {
     std::cout << "\nMaxJobs: " << header.max_jobs << std::endl;
     std::cout << "MaxNodes: " << header.max_nodes << std::endl;
     std::cout << "Wczytane zadania: " << tasks.size() << std::endl;
-
+    std::ofstream res_file("resfile.txt");
     for (const auto& task : tasks) {
-        std::cout << task.id << " " << task.start_time << " " << task.end_time << " ";
+        res_file << task.id << " " << task.start_time << " " << task.end_time << " ";
         if (!task.assigned_processors.empty()) {
             for (size_t i = 0; i < task.assigned_processors.size(); ++i) {
                 if (i > 0) {
-                    std::cout << " ";
+                    res_file << " ";
                 }
-                std::cout << task.assigned_processors[i];
+                res_file << task.assigned_processors[i];
             }
         } else {
-            std::cout << 0;
+            res_file << 0;
         }
-        std::cout << '\n';
+        res_file << '\n';
     }
 
     return 0;

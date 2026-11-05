@@ -1,83 +1,93 @@
 #include "greedy.hpp"
 #include <algorithm>
-#include <iostream>
+#include <limits>
+#include <vector>
 
 void solveGreedy(std::vector<Task>& tasks, int max_processors) {
-    if (tasks.empty()) return;
+    if (tasks.empty() || max_processors <= 0) {
+        return;
+    }
 
-    // 1. Krok opcjonalny, ale zalecany: sortujemy zadania po momencie gotowości (r_j),
-    // żeby symulacja „płynęła” zgodnie z czasem pojawiania się zadań.
-    // (Jeżeli wczytane zadania mają zachować oryginalną kolejność wypisywania, 
-    // musimy pamiętać ich oryginalne indeksy/ID).
     std::sort(tasks.begin(), tasks.end(), [](const Task& a, const Task& b) {
-        return a.arrival_time < b.arrival_time;
+        if (a.arrival_time != b.arrival_time) {
+            return a.arrival_time < b.arrival_time;
+        }
+        if (a.duration != b.duration) {
+            return a.duration < b.duration;
+        }
+        if (a.size != b.size) {
+            return a.size < b.size;
+        }
+        return a.id < b.id;
     });
 
-    // Tablica przechowująca czas, do którego każdy procesor (od 0 do M-1) jest zajęty
-    std::vector<long long> processor_free_time(max_processors, 0);
+    std::vector<long long> processor_free_time(max_processors, 0LL);
 
-    // Symulacja dla każdego zadania
     for (auto& task : tasks) {
-        // Zadanie nie może zacząć się wcześniej niż jego arrival_time (r_j)
-        long long current_time = task.arrival_time;
-
-        // Potrzebujemy znaleźć moment, w którym zbierzemy 'size' wolnych procesorów.
-        // Ponieważ robimy przydział NIEPRZYLEGŁY, wystarczy nam DOWOLNYCH size procesorów,
-        // które będą wolne w tym samym momencie.
-        std::vector<int> chosen_processors;
-        
-        while (true) {
-            chosen_processors.clear();
-            long long max_free_among_chosen = current_time;
-
-            // Szukamy wolnych procesorów w puli
-            for (int p = 0; p < max_processors; ++p) {
-                if (processor_free_time[p] <= current_time) {
-                    chosen_processors.push_back(p);
-                    if (chosen_processors.size() == static_cast<size_t>(task.size)) {
-                        break;
-                    }
-                }
-            }
-
-            // Jeśli znaleźliśmy wystarczającą liczbę procesorów wolnych w 'current_time', przerywamy
-            if (chosen_processors.size() == static_cast<size_t>(task.size)) {
-                break;
-            }
-
-            // Jeśli nie, musimy przesunąć czas w przyszłość do momentu, 
-            // aż zwolni się jakiś kolejny procesor, który mógłby nam pomóc.
-            // Szukamy najwcześniejszego czasu zwolnienia procesora spośród tych, które jeszcze nie są wolne.
-            long long next_free_time = -1;
-            for (int p = 0; p < max_processors; ++p) {
-                if (processor_free_time[p] > current_time) {
-                    if (next_free_time == -1 || processor_free_time[p] < next_free_time) {
-                        next_free_time = processor_free_time[p];
-                    }
-                }
-            }
-
-            if (next_free_time == -1) {
-                // Zabezpieczenie (nie powinno wystąpić, chyba że zadanie żąda więcej procesorów niż ma klaster)
-                break;
-            }
-            current_time = next_free_time;
+        if (task.size > max_processors) {
+            task.size = max_processors;
         }
 
-        // Ustalamy moment startu i zakończenia zadania
+        long long current_time = task.arrival_time;
+        std::vector<int> candidate_processors;
+        candidate_processors.reserve(max_processors);
+
+        for (int p = 0; p < max_processors; ++p) {
+            candidate_processors.push_back(p);
+        }
+
+        std::vector<int> chosen_processors;
+        chosen_processors.reserve(task.size);
+
+        while (chosen_processors.size() < static_cast<size_t>(task.size)) {
+            int best_processor = -1;
+            long long best_free_time = std::numeric_limits<long long>::max();
+
+            for (int p : candidate_processors) {
+                if (processor_free_time[p] < best_free_time) {
+                    best_free_time = processor_free_time[p];
+                    best_processor = p;
+                }
+            }
+
+            if (best_processor == -1) {
+                break;
+            }
+
+            if (best_free_time > current_time) {
+                current_time = best_free_time;
+                continue;
+            }
+
+            chosen_processors.push_back(best_processor);
+            auto it = std::find(candidate_processors.begin(), candidate_processors.end(), best_processor);
+            if (it != candidate_processors.end()) {
+                candidate_processors.erase(it);
+            }
+        }
+
+        if (chosen_processors.size() < static_cast<size_t>(task.size)) {
+            // Last-resort fallback: if the pool is too tight, keep the earliest feasible start.
+            long long next_event = current_time;
+            for (int p = 0; p < max_processors; ++p) {
+                if (processor_free_time[p] > next_event) {
+                    next_event = processor_free_time[p];
+                }
+            }
+            if (next_event > current_time) {
+                current_time = next_event;
+            }
+        }
+
         task.start_time = current_time;
         task.end_time = current_time + task.duration;
         task.assigned_processors = chosen_processors;
 
-        // Aktualizujemy czas zajętości dla przydzielonych procesorów
         for (int p : chosen_processors) {
             processor_free_time[p] = task.end_time;
         }
     }
 
-    // 3. Ważne: Sprawdzarka wymaga, aby zadania w pliku wynikowym były w takiej kolejności, 
-    // w jakiej występowały w oryginalnym pliku wejściowym (nie wolno zmieniać ID ani kolejności wyjściowej).
-    // Jeśli posortowaliśmy je wyżej po r_j, teraz musimy je z powrotem posortować rosnąco po ID!
     std::sort(tasks.begin(), tasks.end(), [](const Task& a, const Task& b) {
         return a.id < b.id;
     });

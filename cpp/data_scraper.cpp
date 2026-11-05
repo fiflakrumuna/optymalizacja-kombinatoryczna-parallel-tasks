@@ -92,45 +92,45 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
     return data_ready;
 }
 
-/*
-int main(void) {
-    std::string file_path;
 
-    std::cout << "Podaj sciezke do pliku: ";
+//int main(void) {
+//    std::string file_path;
+//
+//    std::cout << "Podaj sciezke do pliku: ";
+//
+//    std::getline(std::cin, file_path);
+//
+//    int proc_limit;
+//
+//    std::cout << "Podaj ilosc procesow do przerobienia: ";
+//
+//    std::cin >> proc_limit;
+//    
+//    
+//    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
+//        file_path.erase(0, 1);
+//    }
+//    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
+//        file_path.pop_back();
+//    }
+//
+//    std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
+//
+//    if (data.empty()) {
+//        std::cout << "Brak danych do wyswietlenia." << std::endl;
+//        return 0;
+//    }
+//
+//    std::cout << "Pobrano " << data.size() << " wierszy danych:\n\n";
+//
+//    for (size_t i = 0; i < data.size(); ++i) {
+//        std::cout << "Wiersz " << (i + 1) << ": ";
+//        for (int value : data[i]) {
+//            std::cout << value << "\t";
+//        }
+//        std::cout << "\n";
+//    }
+//
+//    return 0;
+//}
 
-    std::getline(std::cin, file_path);
-
-    int proc_limit;
-
-    std::cout << "Podaj ilosc procesow do przerobienia: ";
-
-    std::cin >> proc_limit;
-    
-    
-    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
-        file_path.erase(0, 1);
-    }
-    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
-        file_path.pop_back();
-    }
-
-    std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
-
-    if (data.empty()) {
-        std::cout << "Brak danych do wyswietlenia." << std::endl;
-        return 0;
-    }
-
-    std::cout << "Pobrano " << data.size() << " wierszy danych:\n\n";
-
-    for (size_t i = 0; i < data.size(); ++i) {
-        std::cout << "Wiersz " << (i + 1) << ": ";
-        for (int value : data[i]) {
-            std::cout << value << "\t";
-        }
-        std::cout << "\n";
-    }
-
-    return 0;
-}
-*/
