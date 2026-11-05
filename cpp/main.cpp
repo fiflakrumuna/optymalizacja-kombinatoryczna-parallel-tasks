@@ -17,26 +17,29 @@ int main(int argc,char* argv[]) {
     }
     else{
     
-    std::cout << "Podaj sciezke do pliku: ";
-    std::getline(std::cin, file_path);
+        std::cout << "Podaj sciezke do pliku: ";
+        std::getline(std::cin, file_path);
 
-    if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
-        file_path.erase(0, 1);
-    }
-    if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
-        file_path.pop_back();
-    }
+        if (!file_path.empty() && (file_path.front() == '"' || file_path.front() == '\'')) {
+            file_path.erase(0, 1);
+        }
+        if (!file_path.empty() && (file_path.back() == '"' || file_path.back() == '\'')) {
+            file_path.pop_back();
+        }
 
-    
-    std::cout << "Podaj liczbe zadan do przetworzenia: ";
-    std::cin >> task_limit;
-    }
-    if (task_limit <= 0) {
-        std::cout << "Liczba zadan musi byc dodatnia." << std::endl;
-        return 0;
+
+        std::cout << "Podaj liczbe zadan do przetworzenia: ";
+        std::cin >> task_limit;
+        }
+        if (task_limit <= 0) {
+            std::cout << "Liczba zadan musi byc dodatnia." << std::endl;
+            return 0;
     }
 
     HeaderInfo header = parseHeader(file_path);
+    if (!(task_limit >= header.max_jobs)){
+        task_limit = header.max_jobs;
+    }
     int remaining_tasks = task_limit;
     std::vector<std::vector<int>> raw_data = scrap(file_path, remaining_tasks);
 
