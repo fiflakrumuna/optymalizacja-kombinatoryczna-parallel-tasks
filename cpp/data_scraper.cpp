@@ -19,7 +19,6 @@ HeaderInfo parseHeader(const std::string& file_path) {
     while (std::getline(file, line)) {
         size_t first_char = line.find_first_not_of(" \t\r\n");
 
-        // Jeśli trafimy na pierwszą linię danych (nie-komentarz), nagłówek się skończył
         if (first_char != std::string::npos && line[first_char] != ';') {
             break;
         }
@@ -70,10 +69,9 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
 
         while (ss >> value) {
             if (column_index == 3) {
-                col3_value = value; // Zapamiętujemy wartość 4. kolumny
+                col3_value = value;
             }
 
-            // Zachowujemy tylko kolumny o indeksach 0, 1, 3, 4
             if (column_index == 0 || column_index == 1 || column_index == 3 || column_index == 4) {
                 row.push_back(value);
             }
