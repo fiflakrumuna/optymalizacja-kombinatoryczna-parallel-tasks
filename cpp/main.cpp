@@ -20,7 +20,6 @@ int main() {
 
     std::cin >> proc_limit;
 
-    // Wywołujemy wczytywanie
     HeaderInfo header = parseHeader(file_path);
     std::vector<std::vector<int>> data = scrap(file_path, proc_limit);
 
