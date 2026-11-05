@@ -1,11 +1,22 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 #include "data_scraper.hpp"
 #include "greedy.hpp"
 
-int main() {
+int main(int argc,char* argv[]) {
+
     std::string file_path;
+    int task_limit = 0;
+    if(argc>=2){
+        file_path = argv[1];
+        if(argc>=3){
+            task_limit = std::atoi(argv[2]);
+        }
+    }
+    else{
+    
     std::cout << "Podaj sciezke do pliku: ";
     std::getline(std::cin, file_path);
 
@@ -16,10 +27,10 @@ int main() {
         file_path.pop_back();
     }
 
-    int task_limit = 0;
+    
     std::cout << "Podaj liczbe zadan do przetworzenia: ";
     std::cin >> task_limit;
-
+    }
     if (task_limit <= 0) {
         std::cout << "Liczba zadan musi byc dodatnia." << std::endl;
         return 0;
@@ -71,7 +82,7 @@ int main() {
         } else {
             std::cout << 0;
         }
-        std::cout << std::endl;
+        std::cout << '\n';
     }
 
     return 0;
