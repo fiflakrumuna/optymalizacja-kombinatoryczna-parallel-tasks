@@ -1,0 +1,3 @@
+/* 
+ALGORTYM ZACHŁANNY
+*/
