@@ -33,7 +33,7 @@ HeaderInfo parseHeader(const std::string& file_path) {
         }
 
         // Wyciąganie wartości MaxRecords
-        size_t nodes_pos = line.find("MaxNodes:");
+        size_t nodes_pos = line.find("MaxProcs:");
         if (nodes_pos != std::string::npos) {
             std::stringstream ss(line.substr(nodes_pos + 10));
             ss >> info.max_nodes;
@@ -92,6 +92,7 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
     return data_ready;
 }
 
+
 //int main(void) {
 //    std::string file_path;
 //
@@ -132,3 +133,4 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
 //
 //    return 0;
 //}
+
