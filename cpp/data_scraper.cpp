@@ -32,7 +32,7 @@ HeaderInfo parseHeader(const std::string& file_path) {
             ss >> info.max_jobs;
         }
 
-        // Wyciąganie wartości MaxRecords
+        // Wyciąganie wartości MaxProcs
         size_t nodes_pos = line.find("MaxProcs:");
         if (nodes_pos != std::string::npos) {
             std::stringstream ss(line.substr(nodes_pos + 10));
@@ -44,9 +44,9 @@ HeaderInfo parseHeader(const std::string& file_path) {
     return info;
 }
 
-std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limit) {
+std::vector<std::vector<long long>> scrap(const std::string& file_path, int& proc_limit) {
     std::ifstream file(file_path);
-    std::vector<std::vector<int>> data_ready;
+    std::vector<std::vector<long long>> data_ready;
 
     if (!file.is_open()) {
         std::cerr << "Blad: Nie mozna otworzyc pliku: " << file_path << std::endl;
@@ -62,10 +62,10 @@ std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limi
         }
 
         std::stringstream ss(line);
-        std::vector<int> row;
-        int value;
+        std::vector<long long> row;
+        long long value;
         int column_index = 0;
-        int col3_value = 0;
+        long long col3_value = 0;
 
         while (ss >> value) {
             if (column_index == 3) {

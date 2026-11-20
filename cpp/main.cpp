@@ -41,7 +41,7 @@ int main(int argc,char* argv[]) {
         task_limit = header.max_jobs;
     }
     int remaining_tasks = task_limit;
-    std::vector<std::vector<int>> raw_data = scrap(file_path, remaining_tasks);
+    std::vector<std::vector<long long>> raw_data = scrap(file_path, remaining_tasks);
 
     std::vector<Task> tasks;
     tasks.reserve(raw_data.size());
@@ -74,12 +74,12 @@ int main(int argc,char* argv[]) {
     std::cout << "Wczytane zadania: " << tasks.size() << std::endl;
     std::ofstream res_file("resfile.txt");
     for (const auto& task : tasks) {
-        res_file << task.id << " " << task.start_time << " " << task.end_time << " ";
+        res_file << task.id << " " << task.start_time << " " << task.end_time;
         if (!task.assigned_processors.empty()) {
             for (size_t i = 0; i < task.assigned_processors.size(); ++i) {
-                if (i > 0) {
-                    res_file << " ";
-                }
+                
+                res_file << " ";
+                
                 res_file << task.assigned_processors[i];
             }
         } else {

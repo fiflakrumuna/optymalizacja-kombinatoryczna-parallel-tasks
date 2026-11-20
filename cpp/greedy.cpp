@@ -67,7 +67,7 @@ void solveGreedy(std::vector<Task>& tasks, int max_processors) {
         }
 
         if (chosen_processors.size() < static_cast<size_t>(task.size)) {
-            // Last-resort fallback: if the pool is too tight, keep the earliest feasible start.
+            
             long long next_event = current_time;
             for (int p = 0; p < max_processors; ++p) {
                 if (processor_free_time[p] > next_event) {

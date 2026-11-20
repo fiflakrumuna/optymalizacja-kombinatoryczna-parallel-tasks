@@ -11,6 +11,6 @@ struct HeaderInfo {
 
 
 HeaderInfo parseHeader(const std::string& file_path);
-std::vector<std::vector<int>> scrap(const std::string& file_path, int& proc_limit);
+std::vector<std::vector<long long>> scrap(const std::string& file_path, int& proc_limit);
 
 #endif
